@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Party Dice App</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+h1 { text-align: center; }
+.buttons { display: flex; justify-content: center; margin-bottom: 10px; gap: 10px; }
+.buttons button { padding: 10px 20px; }
+input[type="number"] { width: 60px; padding: 5px; margin-left: 10px; }
+.custom-inputs { margin: 10px 0; }
+.custom-inputs input { display: block; width: 100%; padding: 5px; margin: 5px 0; }
+#result { font-weight: bold; margin-top: 20px; text-align: center; }
+</style>
+</head>
+<body>
+<h1>Party Dice App</h1>
+<div class="buttons">
+  <button id="classicBtn">Classic</button>
+  <button id="customBtn">Custom</button>
+</div>
+<div>
+  <label>Number of sides (2-10): <input type="number" id="sidesInput" value="6" min="2" max="10"></label>
+</div>
+<div id="customInputs" class="custom-inputs" style="display: none;"></div>
+<button id="rollBtn">Roll</button>
+<div id="result"></div>
+
+<script>
+let mode = 'classic';
+
+const classicBtn = document.getElementById('classicBtn');
+const customBtn = document.getElementById('customBtn');
+const sidesInput = document.getElementById('sidesInput');
+const customInputsDiv = document.getElementById('customInputs');
+const rollBtn = document.getElementById('rollBtn');
+const resultDiv = document.getElementById('result');
+
+function updateCustomInputs() {
+  const sides = Math.min(Math.max(parseInt(sidesInput.value), 2), 10);
+  customInputsDiv.innerHTML = '';
+  for (let i = 1; i <= sides; i++) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Value for side ' + i;
+    customInputsDiv.appendChild(input);
+  }
+}
+
+classicBtn.addEventListener('click', () => {
+  mode = 'classic';
+  customInputsDiv.style.display = 'none';
+});
+
+customBtn.addEventListener('click', () => {
+  mode = 'custom';
+  customInputsDiv.style.display = 'block';
+  updateCustomInputs();
+});
+
+sidesInput.addEventListener('change', () => {
+  if (mode === 'custom') {
+    updateCustomInputs();
+  }
+});
+
+rollBtn.addEventListener('click', () => {
+  const sides = Math.min(Math.max(parseInt(sidesInput.value), 2), 10);
+  if (mode === 'classic') {
+    const number = Math.floor(Math.random() * sides) + 1;
+    resultDiv.textContent = 'You rolled: ' + number;
+  } else {
+    const inputs = Array.from(customInputsDiv.querySelectorAll('input'));
+    const values = inputs.map((inp, index) => inp.value.trim() || ('Face ' + (index + 1)));
+    const idx = Math.floor(Math.random() * sides);
+    resultDiv.textContent = values[idx];
+  }
+});
+</script>
+</body>
+</html>
