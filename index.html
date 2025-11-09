@@ -74,19 +74,23 @@ const customInputsDiv = document.getElementById('customInputs');
 const rollBtn = document.getElementById('rollBtn');
 const resultCard = document.getElementById('resultCard');
 let mode = 'classic';
+
 classicBtn.addEventListener('click', () => {
   mode = 'classic';
   customInputsDiv.style.display = 'none';
 });
+
 customBtn.addEventListener('click', () => {
   mode = 'custom';
   updateCustomInputs();
 });
+
 sidesInput.addEventListener('input', () => {
   if (mode === 'custom') {
     updateCustomInputs();
   }
 });
+
 function updateCustomInputs() {
   customInputsDiv.innerHTML = '';
   const numSides = parseInt(sidesInput.value);
@@ -98,17 +102,31 @@ function updateCustomInputs() {
   }
   customInputsDiv.style.display = 'block';
 }
+
 rollBtn.addEventListener('click', () => {
   const numSides = parseInt(sidesInput.value);
-  let resultDisplay;
   if (mode === 'classic') {
-    const roll = Math.floor(Math.random() * numSides) + 1;
-    if (numSides <= 6) {
-      const diceEmojis = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-      resultDisplay = diceEmojis[roll - 1];
-    } else {
-      resultDisplay = roll;
-    }
+    const finalRoll = Math.floor(Math.random() * numSides) + 1;
+    const diceEmojis = ['\u2680','\u2681','\u2682','\u2683','\u2684','\u2685'];
+    const finalDisplay = (numSides <= 6) ? diceEmojis[finalRoll - 1] : finalRoll;
+    let elapsed = 0;
+    const interval = setInterval(() => {
+      const tempRoll = Math.floor(Math.random() * numSides) + 1;
+      const tempDisplay = (numSides <= 6) ? diceEmojis[tempRoll - 1] : tempRoll;
+      resultCard.textContent = tempDisplay;
+      resultCard.classList.remove('roll');
+      void resultCard.offsetWidth;
+      resultCard.classList.add('roll');
+      resultCard.style.display = 'block';
+      elapsed += 100;
+      if (elapsed >= 3000) {
+        clearInterval(interval);
+        resultCard.textContent = finalDisplay;
+        resultCard.classList.remove('roll');
+        void resultCard.offsetWidth;
+        resultCard.classList.add('roll');
+      }
+    }, 100);
   } else {
     const inputs = customInputsDiv.querySelectorAll('input');
     const values = Array.from(inputs).map(input => input.value.trim()).filter(val => val !== '');
@@ -116,14 +134,27 @@ rollBtn.addEventListener('click', () => {
       alert('Please provide values for all sides.');
       return;
     }
-    const randomIndex = Math.floor(Math.random() * values.length);
-    resultDisplay = values[randomIndex];
+    const finalIndex = Math.floor(Math.random() * values.length);
+    const finalValue = values[finalIndex];
+    let elapsed = 0;
+    const interval = setInterval(() => {
+      const tempIndex = Math.floor(Math.random() * values.length);
+      const tempValue = values[tempIndex];
+      resultCard.textContent = tempValue;
+      resultCard.classList.remove('roll');
+      void resultCard.offsetWidth;
+      resultCard.classList.add('roll');
+      resultCard.style.display = 'block';
+      elapsed += 100;
+      if (elapsed >= 3000) {
+        clearInterval(interval);
+        resultCard.textContent = finalValue;
+        resultCard.classList.remove('roll');
+        void resultCard.offsetWidth;
+        resultCard.classList.add('roll');
+      }
+    }, 100);
   }
-  resultCard.textContent = resultDisplay;
-  resultCard.classList.remove('roll');
-  resultCard.style.display = 'block';
-  void resultCard.offsetWidth;
-  resultCard.classList.add('roll');
 });
 </script>
 </body>
