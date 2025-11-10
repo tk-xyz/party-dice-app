@@ -394,6 +394,37 @@
     let lang = "en";
 
     document.addEventListener("DOMContentLoaded", () => {
+
+            // ---- Dice sound (Web Audio) ----
+      let audioCtx;
+
+      function playDiceSound() {
+        try {
+          if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            audioCtx = new AudioContext();
+          }
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = "square";
+          osc.frequency.value = 450; // tıkır tıkır hissi
+
+          gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        } catch (e) {
+          // sessiz fail, sorun yok
+        }
+      }
+
       // Dil tespiti
       const navLang = (navigator.language || navigator.userLanguage || "en").toLowerCase();
       lang = navLang.startsWith("tr") ? "tr" : "en";
@@ -472,6 +503,8 @@
 
       // Klasik zar atma
       function rollDice() {
+        playDiceSound();
+
         const sides = Math.max(1, parseInt(classicSidesInput.value, 10) || 1);
         classicSidesInput.value = sides;
         diceContainer.innerHTML = "";
