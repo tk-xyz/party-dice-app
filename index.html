@@ -347,7 +347,6 @@
   </div>
 
   <script>
-    // --- Config & translations ---
     const diceImages = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png"];
 
     const translations = {
@@ -394,15 +393,15 @@
     let lang = "en";
 
     document.addEventListener("DOMContentLoaded", () => {
-
-            // ---- Dice sound (Web Audio) ----
+      // ---- Ses: Web Audio ile kısa "tık" efekti ----
       let audioCtx;
 
       function playDiceSound() {
         try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+
           if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
             audioCtx = new AudioContext();
           }
 
@@ -410,18 +409,19 @@
           const gain = audioCtx.createGain();
 
           osc.type = "square";
-          osc.frequency.value = 450; // tıkır tıkır hissi
+          osc.frequency.value = 450; // tık sesi
 
-          gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+          const now = audioCtx.currentTime;
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
 
           osc.connect(gain);
           gain.connect(audioCtx.destination);
 
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
         } catch (e) {
-          // sessiz fail, sorun yok
+          // sessizce geç
         }
       }
 
@@ -503,6 +503,7 @@
 
       // Klasik zar atma
       function rollDice() {
+        // Her atışta ses
         playDiceSound();
 
         const sides = Math.max(1, parseInt(classicSidesInput.value, 10) || 1);
@@ -511,11 +512,6 @@
         classicNumberResult.textContent = "";
 
         const isImageMode = sides <= 6;
-
-        // Zar sesi eklemek istersen:
-        // const diceSound = new Audio("dice.mp3");
-        // diceSound.currentTime = 0;
-        // diceSound.play().catch(() => {});
 
         if (isImageMode) {
           const diceEl = document.createElement("img");
@@ -632,5 +628,3 @@
   </script>
 </body>
 </html>
-
-
