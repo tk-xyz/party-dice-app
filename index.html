@@ -590,6 +590,10 @@
 
       // Özel görev seçme
       function rollDuty() {
+        const diceSound = document.getElementById('dice-sound');
+diceSound.currentTime = 0;   // başa sar
+diceSound.play();
+
         const inputs = Array.from(tasksContainer.querySelectorAll("input[type='text']"));
         const t = translations[lang];
         const nonEmpty = inputs
@@ -629,5 +633,7 @@
       customRollBtn.addEventListener("click", rollDuty);
     });
   </script>
+<audio id="dice-sound" src="dice.mp3" preload="auto"></audio>
+
 </body>
 </html>
