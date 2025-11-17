@@ -506,8 +506,12 @@
 
       // Klasik zar atma
       function rollDice() {
-        // Her atışta ses
-        playDiceSound();
+      // >>> Ses çalma (bunu ekliyorsun)
+      const diceSound = document.getElementById("dice-sound");
+      if (diceSound) { diceSound.currentTime = 0;
+         diceSound.play();
+     }
+     // <<< Ses çalma
 
         const sides = Math.max(1, parseInt(classicSidesInput.value, 10) || 1);
         classicSidesInput.value = sides;
@@ -590,9 +594,9 @@
 
       // Özel görev seçme
       function rollDuty() {
-        const diceSound = document.getElementById('dice-sound');
-diceSound.currentTime = 0;   // başa sar
-diceSound.play();
+     
+
+
 
         const inputs = Array.from(tasksContainer.querySelectorAll("input[type='text']"));
         const t = translations[lang];
